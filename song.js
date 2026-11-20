@@ -15,7 +15,9 @@ let songFocus=false, partPick=0;
 const TRACK_Y=30, ROW_H=18, SONG_Y=199, SONG_H=17;
 const locks=labels.map(()=>new Map());
 let recording=-1,recHold=null,recHeld=false,clear=null;
-const muted=labels.map(()=>false), patch=labels.map(()=>0), toggled=new Set();
+const muteLatch=labels.map(()=>false), patch=labels.map(()=>0), toggled=new Set();
+let mixerOpen=false;
+const isMuted=t=>t>0&&(muteLatch[t]||mix[t][0]===0);
 let track=0,mode='song',zoom=false,position=0,transport='stop',last=performance.now(), hold=null, held=false;
 const clamp=(v,min,max)=>Math.min(max,Math.max(min,v));
 function text(s,x,y,col='#e7edf7',font=9){g.fillStyle=col;g.font=`600 ${font}px monospace`;g.textBaseline='middle';g.fillText(s,x,y);}
@@ -70,7 +72,7 @@ function render(){
  text('SONG',5,SONG_Y+8,songFocus?'#ffcf78':'#9bb0cd');let at=0;
  parts.forEach(([name,n],i)=>{const a=x+Math.floor(at*w/total), b=x+Math.floor((at+n)*w/total);rect(a,SONG_Y,b-a-1,SONG_H,songFocus&&i===partPick?'#ffcf78':i===s.i?'#a895eb':'#40355d');if(b-a>10)text(name,a+3,SONG_Y+8,(songFocus&&i===partPick)||i===s.i?'#120e22':'#eadfff',8);at+=n;});
  if(zoom)rect(x+Math.floor(position*w/total),SONG_Y-1,1,SONG_H+2,'#fff');
- labels.forEach((l,t)=>{const y=TRACK_Y+t*ROW_H,on=!songFocus&&track===t, color=muted[t]?'#68717d':colors[t];rect(3,y,234,16,on?'#343251':'#151e2d');if(on)rect(3,y,2,16,color);text(`${t+1} ${l}`,7,y+8,color,8);
+ labels.forEach((l,t)=>{const y=TRACK_Y+t*ROW_H,on=!songFocus&&track===t, color=isMuted(t)?'#68717d':colors[t];rect(3,y,234,16,on?'#343251':'#151e2d');if(on)rect(3,y,2,16,color);text(`${t+1} ${l}`,7,y+8,color,8);
   if(t===0){drawLocks(t,x,y,w,s);return;}
   if(zoom){
     const len=cycles[t],phase=Math.floor(position*16)%len;
@@ -78,7 +80,7 @@ function render(){
      const xx=x+Math.floor(i*w/len);rect(xx,y+2,1,12,'#273246');
      if(i<16&&events(t,i)!==toggled.has(t+':'+i)){const ny=t===1?y+3:y+3+(i*(t+2))%9;rect(xx+2,ny,t===1?2:4,t===1?10:2,color);}
     }
-    if(transport!=='stop')rect(x+Math.floor(phase*w/len),y+1,1,13,muted[t]?'#747d8c':'#f2f5ff');
+    if(transport!=='stop')rect(x+Math.floor(phase*w/len),y+1,1,13,isMuted(t)?'#747d8c':'#f2f5ff');
   }
   else {let st=0;for(let i=0;i<parts.length;i++){const n=parts[i][1],a=x+Math.floor(st*w/total),b=x+Math.floor((st+n)*w/total);if(events(t,i)||t===1)rect(a,y+3,b-a-1,10,color);st+=n;}}
  });
@@ -86,7 +88,7 @@ function render(){
  rect(px,TRACK_Y-2,1,zoom?ROW_H+2:labels.length*ROW_H+2,'#f2f5ff');if(!zoom)rect(px,SONG_Y-1,1,SONG_H+2,'#f2f5ff');
  if(songFocus)text(`${partPick+1}/${parts.length} · ${parts[partPick][0]} · PRESETS: REPLACE`,6,226,'#ffcf78',8);
  else if(track===0||touched[track]||recording===track){const k=knobView[track];text(`${recording===track?'● REC · ':''}K${k+1} ${(track===0?masterShort:mixShort)[k]} · ${value(k)}`,6,226,masterInk[k],8);}
- else text(`${labels[track]} · ${patches[track][patch[track]]} · ${muted[track]?'MUTED':'SEQ / PRESETS'}`,6,226,'#d6c6ff',8);
+ else text(`${labels[track]} · ${patches[track][patch[track]]} · ${isMuted(track)?'MUTED':'SEQ / PRESETS'}`,6,226,'#d6c6ff',8);
 }
 let presetReturn=null, presetTimer=null;
 function presetActivity(){
@@ -99,13 +101,24 @@ function closePresets(){
  ({mode,track,zoom}=presetReturn);presetReturn=null;
  clearTimeout(presetTimer);presetTimer=null;sync();
 }
+function renderMixer(){
+ const root=$('mixer-keys');if(!mixerOpen)return;
+ const focus=Number(document.activeElement?.dataset.muteTrack);
+ root.replaceChildren(...labels.slice(1).map((label,i)=>{
+   const t=i+1,b=document.createElement('button');b.type='button';b.dataset.muteTrack=t;
+   b.textContent=`${t+1} ${label}${muteLatch[t]?' · MUTE':mix[t][0]===0?' · 0%':''}`;
+   b.setAttribute('aria-label',`MUTE ${t+1} ${label}`);b.setAttribute('aria-pressed',String(muteLatch[t]));
+   b.onclick=()=>{muteLatch[t]=!muteLatch[t];sync();};return b;
+ }));
+ if(focus)root.querySelector(`[data-mute-track="${focus}"]`)?.focus();
+}
 function sync(){
  if(mode!=='presets'&&presetReturn){clearTimeout(presetTimer);presetTimer=null;presetReturn=null;}
  $('home').hidden=mode!=='presets';
 
  $('overview').hidden=$('detail').hidden=mode!=='song';$('back').hidden=mode==='song'&&!songFocus; $('back').textContent=songFocus?'↑ К дорожке 9':'← Песня';$('select-label').textContent=songFocus?'SELECT · ← / → по частям песни':'SELECT · дорожка';$('preset-label').textContent=songFocus?'PRESETS · заменить часть':track===0?'PRESETS · масштаб (− песня / + фрагмент)':'PRESETS · звуки';
  $('overview').setAttribute('aria-pressed',String(!zoom));$('detail').setAttribute('aria-pressed',String(zoom));
- $('play').textContent=transport==='play'?'Ⅱ PAUSE':transport==='pause'?'▶ RESUME':'▶ PLAY';$('seq').disabled=songFocus||track===0;$('mute').disabled=songFocus||track===0;$('mute').setAttribute('aria-pressed',String(muted[track]));
+ $('play').textContent=transport==='play'?'Ⅱ PAUSE':transport==='pause'?'▶ RESUME':'▶ PLAY';$('seq').disabled=songFocus||track===0;$('mixer').setAttribute('aria-expanded',String(mixerOpen));$('mixer-keys').hidden=!mixerOpen;renderMixer();
  $('rec').setAttribute('aria-pressed',String(recording===track));$('rec').disabled=Boolean(clear)||songFocus;$('rec').textContent=recording===track?'● REC ON':'● REC';
  $('knobs').replaceChildren();(songFocus?[]:track===0?masterNames:mixNames).forEach((n,i)=>{const d=document.createElement('div');d.className='row';const label=document.createElement('label');label.textContent=`K${i+1} · ${n}`;label.style.color=masterInk[i];label.style.fontWeight=i===knobView[track]?'700':'';const val=document.createElement('span');val.textContent=value(i);d.append(label,val);[-1,1].forEach(sign=>{const b=document.createElement('button');b.textContent=sign<0?'−':'+';b.setAttribute('aria-label',n+(sign<0?' уменьшить':' увеличить'));b.onclick=()=>turnKnob(i,sign);d.append(b);});$('knobs').append(d);});
  render();
@@ -124,7 +137,7 @@ function act(k,n){
 for(const b of document.querySelectorAll('[data-do]'))b.onclick=()=>{const [k,n]=b.dataset.do.split(',');act(k,Number(n));};
 $('home').onclick=closePresets;
 for(const event of ['click','keydown','wheel'])document.addEventListener(event,presetActivity,true);
-$('back').onclick=()=>{if(mode==='presets')return closePresets();mode='song';songFocus=false;sync();};$('seq').onclick=()=>{if(track){mode='seq';sync();}};$('mute').onclick=()=>{if(track){muted[track]=!muted[track];sync();}};
+$('back').onclick=()=>{if(mode==='presets')return closePresets();mode='song';songFocus=false;sync();};$('seq').onclick=()=>{if(track){mode='seq';sync();}};$('mixer').onclick=()=>{mixerOpen=!mixerOpen;sync();};
 $('overview').onclick=()=>{zoom=false;sync();};$('detail').onclick=()=>{zoom=true;sync();};
 function shortPlay(){last=performance.now();transport=transport==='play'?'pause':'play';sync();}
 function stop(){transport='stop';position=0;sync();}
