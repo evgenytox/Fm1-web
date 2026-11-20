@@ -6,6 +6,9 @@ const parts=[['A',8],['B',8],['A',8],['C',12],['D',8],['A',8],['E',12]], total=6
 const patches=[[],['ACOUSTIC','808 BOOM','909 CLUB'],['SUB','FM BASS','PLUCK'],['TINE','ORGAN','PIANO'],['AIR','CLOUD','WARM'],['SOFT LEAD','SYNC','SAW'],['TOMS','SHAKER','CLAPS'],['SWEEP','NOISE','RING'],['INIT','BELLS','PLUCK']];
 const master=[112,0,0,0], masterNames=['Темп','DJ-фильтр','Sidechain / Pump','Sync Delay / Echo'];
 const mix=labels.map(()=>[80,0,0,0]), mixNames=['Громкость','Панорама L / R','Фильтр LPF / HPF','Reverb'];
+const masterInk=['#ffcf78','#8dd9ff','#ffa2bf','#9ce9a5'];
+const masterShort=['BPM','DJ FILTER','PUMP','ECHO'];
+let masterView=0;
 const locks=labels.map(()=>new Map());
 let recording=-1,recHold=null,recHeld=false,clear=null;
 const muted=labels.map(()=>false), patch=labels.map(()=>0), toggled=new Set();
@@ -19,10 +22,29 @@ function bipolar(v,left,right){return v===0?'0':(v<0?left:right)+' '+Math.abs(v)
 function value(i){const v=(track===0?master:mix[track])[i];return track===0?(i===0?v+' BPM':i===1?bipolar(v,'LPF','HPF'):v+'%'):(i===1?bipolar(v,'L','R'):i===2?bipolar(v,'LPF','HPF'):v+'%');}
 function lockCount(t){return [...locks[t].values()].reduce((n,v)=>n+Object.keys(v).length,0);}
 function turnKnob(i,sign){
+ if(track===0)masterView=i;
  const row=track===0?master:mix[track], tempo=track===0&&i===0, bipolarKnob=i===1||(track!==0&&i===2);
  row[i]=clamp(row[i]+sign*(tempo?1:5),tempo?30:bipolarKnob?-100:0,tempo?300:100);
  if(recording===track){const step=Math.floor(position*16), point=locks[track].get(step)||{};point[i]=row[i];locks[track].set(step,point);}
  sync();
+}
+// Draw step automation as it was recorded; a flat line means no changes.
+function drawMaster(x,y,w,s){
+ const k=masterView,color=masterInk[k],start=zoom?s.at:0,end=zoom?s.at+s.n:total;
+ const points=[...locks[0]].filter(([,p])=>Object.hasOwn(p,k)).map(([step,p])=>[step/16,p[k]]).sort((a,b)=>a[0]-b[0]);
+ const [lo,hi]=k===0?[30,300]:k===1?[-100,100]:[0,100];
+ const py=v=>y+13-Math.round((v-lo)*10/(hi-lo));
+ const pos=bar=>x+Math.min(w-1,Math.floor((bar-start)*w/(end-start)));
+ rect(x,y+8,w,1,'#4b4861');
+ for(let at=0,i=0;at<parts.length;at+=parts[i++][1])if(at>start&&at<end)rect(pos(at),y+2,1,12,'#48425a');
+ let v=points.length?[112,0,0,0][k]:master[k],from=x;
+ for(const [bar,next] of points){
+   if(bar<start){v=next;continue;}if(bar>=end)break;
+   const to=pos(bar),a=py(v),b=py(next);
+   rect(from,a,Math.max(1,to-from),1,color);rect(to,Math.min(a,b),1,Math.abs(a-b)+1,color);
+   rect(to,b,2,2,color);v=next;from=to;
+ }
+ rect(from,py(v),x+w-from,1,color);
 }
 function render(){
  rect(0,0,240,240,'#080c14');const s=section();
@@ -41,20 +63,20 @@ function render(){
  parts.forEach(([name,n],i)=>{const a=x+Math.floor(at*w/total), b=x+Math.floor((at+n)*w/total);rect(a,29,b-a-1,13,i===s.i?'#a895eb':'#40355d');if(b-a>10)text(name,a+3,35,i===s.i?'#120e22':'#eadfff',8);at+=n;});
  if(zoom)rect(x+Math.floor(position*w/total),27,1,17,'#fff');
  labels.forEach((l,t)=>{const y=47+t*18,on=track===t, color=muted[t]?'#68717d':colors[t];rect(3,y,234,16,on?'#343251':'#151e2d');if(on)rect(3,y,2,16,color);text(`${t+1} ${l}`,7,y+8,color,8);
-  if(t===0){rect(x,y+11,w,1, '#485065');for(let k=0;k<33;k++){const h=4+Math.floor(3*Math.sin(k*.7));rect(x+k*5,y+10-h,2,h,'#a699bf');}return;}
+  if(t===0){drawMaster(x,y,w,s);return;}
   if(zoom){for(let i=0;i<48;i++)if(events(t,i+s.i*5)){const xx=x+Math.floor(i*w/48),ny=t===1?y+3:y+3+(i*(t+2))%9;rect(xx,ny,t===1?1:3,t===1?10:2,color);}}
   else {let st=0;for(let i=0;i<parts.length;i++){const n=parts[i][1],a=x+Math.floor(st*w/total),b=x+Math.floor((st+n)*w/total);if(events(t,i)||t===1)rect(a,y+3,b-a-1,10,color);st+=n;}}
  });
- const px=x+Math.min(w-1,Math.floor((zoom?(position-s.at)/s.n:position/total)*w));for(let t=0;t<locks.length;t++)for(const step of locks[t].keys()){const bar=step/16;if(zoom&&(bar<s.at||bar>=s.at+s.n))continue;const lx=x+Math.floor((zoom?(bar-s.at)/s.n:bar/total)*w);rect(lx,60+t*18,2,2,muted[t]?'#858585':'#ffcf78');}
+ const px=x+Math.min(w-1,Math.floor((zoom?(position-s.at)/s.n:position/total)*w));for(let t=1;t<locks.length;t++)for(const step of locks[t].keys()){const bar=step/16;if(zoom&&(bar<s.at||bar>=s.at+s.n))continue;const lx=x+Math.floor((zoom?(bar-s.at)/s.n:bar/total)*w);rect(lx,60+t*18,2,2,muted[t]?'#858585':'#ffcf78');}
  rect(px,44,1,165,'#f2f5ff');
- if(recording===track)text('● REC · '+lockCount(track)+' LOCKS',6,226,'#ff776f',8);else text(track===0?'MASTER · K1 BPM K2 DJ K3 PUMP K4 ECHO':`${labels[track]} · ${patches[track][patch[track]]} · ${muted[track]?'MUTED':'SEQ / PRESETS'}`,6,226,'#d6c6ff',8);
+ if(track===0)text(`${recording===0?'● REC · ':''}K${masterView+1} ${masterShort[masterView]} · ${value(masterView)}`,6,226,masterInk[masterView],8);else if(recording===track)text('● REC · '+lockCount(track)+' LOCKS',6,226,'#ff776f',8);else text(track===0?'MASTER · K1 BPM K2 DJ K3 PUMP K4 ECHO':`${labels[track]} · ${patches[track][patch[track]]} · ${muted[track]?'MUTED':'SEQ / PRESETS'}`,6,226,'#d6c6ff',8);
 }
 function sync(){
  $('overview').hidden=$('detail').hidden=mode!=='song';$('back').hidden=mode==='song';
  $('overview').setAttribute('aria-pressed',String(!zoom));$('detail').setAttribute('aria-pressed',String(zoom));
  $('play').textContent=transport==='play'?'Ⅱ PAUSE':transport==='pause'?'▶ RESUME':'▶ PLAY';$('seq').disabled=track===0;$('mute').disabled=track===0;$('mute').setAttribute('aria-pressed',String(muted[track]));
  $('rec').setAttribute('aria-pressed',String(recording===track));$('rec').disabled=Boolean(clear);$('rec').textContent=recording===track?'● REC ON':'● REC';
- $('knobs').replaceChildren();(track===0?masterNames:mixNames).forEach((n,i)=>{const d=document.createElement('div');d.className='row';const label=document.createElement('label');label.textContent=`K${i+1} · ${n}`;const val=document.createElement('span');val.textContent=value(i);d.append(label,val);[-1,1].forEach(sign=>{const b=document.createElement('button');b.textContent=sign<0?'−':'+';b.setAttribute('aria-label',n+(sign<0?' уменьшить':' увеличить'));b.onclick=()=>turnKnob(i,sign);d.append(b);});$('knobs').append(d);});
+ $('knobs').replaceChildren();(track===0?masterNames:mixNames).forEach((n,i)=>{const d=document.createElement('div');d.className='row';const label=document.createElement('label');label.textContent=`K${i+1} · ${n}`;if(track===0){label.style.color=masterInk[i];label.style.fontWeight=i===masterView?'700':'';}const val=document.createElement('span');val.textContent=value(i);d.append(label,val);[-1,1].forEach(sign=>{const b=document.createElement('button');b.textContent=sign<0?'−':'+';b.setAttribute('aria-label',n+(sign<0?' уменьшить':' увеличить'));b.onclick=()=>turnKnob(i,sign);d.append(b);});$('knobs').append(d);});
  render();
 }
 function act(k,n){if(k==='select'){track=clamp(track+n,0,8);if(track===0)mode='song';}else if(track>0){if(mode==='presets')patch[track]=clamp(patch[track]+n,0,patches[track].length-1);else mode='presets';}else $('status').textContent='MASTER не использует пресеты инструментов.';sync();}
