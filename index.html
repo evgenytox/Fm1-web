@@ -82,7 +82,36 @@ footer small { font-size: 11px; opacity: .8; }
 </head>
 <body>
 <main>
-<p style="text-align:center"><a href="editor.html">Редактор HOME →</a></p>
+<nav aria-label="Сборки JIANT" style="margin:12px 0 16px;padding:12px;background:#141c28;border:1px solid #34445a;border-radius:10px">
+  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+    <strong style="color:#eef3fb">Сборка JIANT</strong>
+    <label for="jiant-build" style="position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)">Выбрать сборку</label>
+    <select id="jiant-build" style="max-width:100%;min-height:42px;background:#202c3d;color:#fff;border:1px solid #52647e;border-radius:6px;padding:6px">
+      <option value="stand">V10.7.62 beta · наш стенд</option>
+      <option value="beta">Последняя beta автора · JIANT preview</option>
+      <option value="release">Публичная версия автора · JIANT</option>
+    </select>
+    <a id="jiant-build-open" href="./" target="_blank" rel="noopener" style="color:#9ddaff;font-weight:bold">Открыть в новой вкладке ↗</a>
+  </div>
+  <p id="jiant-build-note" style="margin:8px 0 0;color:#c2cfdf">V10.7.62 закреплена на нашем стенде. Нажми Switch on ниже.</p>
+  <p style="margin:8px 0 0"><a style="color:#9ddaff" href="editor.html">Редактор HOME →</a></p>
+</nav>
+<script>
+(() => {
+  const choice = document.getElementById('jiant-build');
+  const link = document.getElementById('jiant-build-open');
+  const note = document.getElementById('jiant-build-note');
+  const builds = {
+    stand: ['./', 'V10.7.62 закреплена на нашем стенде. Нажми Switch on ниже.'],
+    beta: ['https://juanjiant-bit.github.io/JIANT/preview/emu/', 'Откроется официальный эмулятор. Версия обновляется автором; сохранения нашего стенда туда не переносятся.'],
+    release: ['https://juanjiant-bit.github.io/JIANT/emu/', 'Откроется публичный эмулятор автора. Можно держать обе вкладки открытыми для сравнения.']
+  };
+  function sync() { [link.href, note.textContent] = builds[choice.value] || builds.stand; }
+  choice.addEventListener('change', sync);
+  window.addEventListener('pageshow', sync);
+  sync();
+})();
+</script>
 <div class="device" id="device">
   <svg id="panel" viewBox="0 0 1000 624" aria-hidden="true"></svg>
   <canvas id="screen" width="240" height="240" role="img" aria-label="The screen"></canvas>
