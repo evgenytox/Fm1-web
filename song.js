@@ -8,7 +8,9 @@ const master=[112,0,0,0], masterNames=['Темп','DJ-фильтр','Sidechain /
 const mix=labels.map(()=>[80,0,0,0]), mixNames=['Громкость','Панорама L / R','Фильтр LPF / HPF','Reverb'];
 const masterInk=['#ffcf78','#8dd9ff','#ffa2bf','#9ce9a5'];
 const masterShort=['BPM','DJ FILTER','PUMP','ECHO'];
-let masterView=0;
+const knobView=labels.map(()=>0), touched=labels.map(()=>false);
+const mixShort=['LEVEL','PAN','FILTER','REVERB'];
+let songFocus=false, upClicks=0, partPick=0;
 const locks=labels.map(()=>new Map());
 let recording=-1,recHold=null,recHeld=false,clear=null;
 const muted=labels.map(()=>false), patch=labels.map(()=>0), toggled=new Set();
@@ -22,30 +24,34 @@ function bipolar(v,left,right){return v===0?'0':(v<0?left:right)+' '+Math.abs(v)
 function value(i){const v=(track===0?master:mix[track])[i];return track===0?(i===0?v+' BPM':i===1?bipolar(v,'LPF','HPF'):v+'%'):(i===1?bipolar(v,'L','R'):i===2?bipolar(v,'LPF','HPF'):v+'%');}
 function lockCount(t){return [...locks[t].values()].reduce((n,v)=>n+Object.keys(v).length,0);}
 function turnKnob(i,sign){
- if(track===0)masterView=i;
+ knobView[track]=i;touched[track]=true;
  const row=track===0?master:mix[track], tempo=track===0&&i===0, bipolarKnob=i===1||(track!==0&&i===2);
  row[i]=clamp(row[i]+sign*(tempo?1:5),tempo?30:bipolarKnob?-100:0,tempo?300:100);
  if(recording===track){const step=Math.floor(position*16), point=locks[track].get(step)||{};point[i]=row[i];locks[track].set(step,point);}
  sync();
 }
 // Draw step automation as it was recorded; a flat line means no changes.
-function drawMaster(x,y,w,s){
- const k=masterView,color=masterInk[k],start=zoom?s.at:0,end=zoom?s.at+s.n:total;
- const points=[...locks[0]].filter(([,p])=>Object.hasOwn(p,k)).map(([step,p])=>[step/16,p[k]]).sort((a,b)=>a[0]-b[0]);
- const [lo,hi]=k===0?[30,300]:k===1?[-100,100]:[0,100];
- const py=v=>y+13-Math.round((v-lo)*10/(hi-lo));
- const pos=bar=>x+Math.min(w-1,Math.floor((bar-start)*w/(end-start)));
- rect(x,y+8,w,1,'#4b4861');
- for(let at=0,i=0;at<parts.length;at+=parts[i++][1])if(at>start&&at<end)rect(pos(at),y+2,1,12,'#48425a');
- let v=points.length?[112,0,0,0][k]:master[k],from=x;
- for(const [bar,next] of points){
-   if(bar<start){v=next;continue;}if(bar>=end)break;
-   const to=pos(bar),a=py(v),b=py(next);
-   rect(from,a,Math.max(1,to-from),1,color);rect(to,Math.min(a,b),1,Math.abs(a-b)+1,color);
-   rect(to,b,2,2,color);v=next;from=to;
+function drawLocks(t,x,y,w,s){
+ const selected=!songFocus&&track===t, k=knobView[t];
+ const start=zoom?s.at:0,end=zoom?s.at+s.n:total;
+ const norm=(i,v)=>{const lo=t===0&&i===0?30:i===1||(t>0&&i===2)?-100:0,hi=t===0&&i===0?300:100;return (v-lo)/(hi-lo);};
+ const state=new Map(), points=[];
+ for(const [step,p] of [...locks[t]].sort((a,b)=>a[0]-b[0])){
+   if(selected){if(Object.hasOwn(p,k))points.push([step/16,norm(k,p[k])]);}
+   else {for(const [i,v] of Object.entries(p))state.set(Number(i),norm(Number(i),v));if(state.size)points.push([step/16,[...state.values()].reduce((a,b)=>a+b,0)/state.size]);}
  }
- rect(from,py(v),x+w-from,1,color);
+ if(!points.length)return;
+ const color=selected?masterInk[k]:'#9299a8',py=v=>y+13-Math.round(v*10),pos=bar=>x+Math.min(w-1,Math.floor((bar-start)*w/(end-start)));
+ let previous=null,from=x;
+ for(const [bar,v] of points){
+   if(bar<start){previous=v;continue;}if(bar>=end)break;
+   const to=pos(bar),b=py(v);
+   if(previous!==null){const a=py(previous);if(to>from)rect(from,a,to-from,1,color);rect(to,Math.min(a,b),1,Math.abs(a-b)+1,color);}
+   rect(to,b,Math.min(2,x+w-to),2,color);previous=v;from=to;
+ }
+ if(previous!==null)rect(from,py(previous),x+w-from,1,color);
 }
+function replacePart(dir){const opts='ABCDE';parts[partPick][0]=opts[(opts.indexOf(parts[partPick][0])+dir+5)%5];sync();}
 function render(){
  rect(0,0,240,240,'#080c14');const s=section();
  rect(5,5,17,14,'#ff9b53');text(String(track+1),10,12,'#201123',10);text(transport==='play'?'▶':transport==='pause'?'Ⅱ':'■',27,12,'#bcb1ff',12);text(master[0]+' BPM',43,12);text(`PART ${s.name} · BAR ${Math.floor(position)+1}/${total}`,101,12,'#d6c6ff');rect(0,23,240,1,'#34415b');
@@ -59,29 +65,39 @@ function render(){
   for(let i=0;i<16;i++){const x=10+(i%4)*56,y=76+Math.floor(i/4)*33,has=events(track,i)!==toggled.has(track+':'+i);rect(x,y,51,28,has?colors[track]:'#233249');text(String(i+1),x+7,y+14,has?'#13101b':'#b7c4d9');}text('НАЖМИ НА ШАГ',7,226,'#9bb0cd');return;
  }
  const x=53,w=181;
- text(zoom?'FRAGMENT':'SONG',5,35,'#9bb0cd');let at=0;
- parts.forEach(([name,n],i)=>{const a=x+Math.floor(at*w/total), b=x+Math.floor((at+n)*w/total);rect(a,29,b-a-1,13,i===s.i?'#a895eb':'#40355d');if(b-a>10)text(name,a+3,35,i===s.i?'#120e22':'#eadfff',8);at+=n;});
+ text(songFocus?'ARRANGE':zoom?'FRAGMENT':'SONG',5,35,songFocus?'#ffcf78':'#9bb0cd');let at=0;
+ parts.forEach(([name,n],i)=>{const a=x+Math.floor(at*w/total), b=x+Math.floor((at+n)*w/total);rect(a,29,b-a-1,13,songFocus&&i===partPick?'#ffcf78':i===s.i?'#a895eb':'#40355d');if(b-a>10)text(name,a+3,35,(songFocus&&i===partPick)||i===s.i?'#120e22':'#eadfff',8);at+=n;});
  if(zoom)rect(x+Math.floor(position*w/total),27,1,17,'#fff');
- labels.forEach((l,t)=>{const y=47+t*18,on=track===t, color=muted[t]?'#68717d':colors[t];rect(3,y,234,16,on?'#343251':'#151e2d');if(on)rect(3,y,2,16,color);text(`${t+1} ${l}`,7,y+8,color,8);
-  if(t===0){drawMaster(x,y,w,s);return;}
+ labels.forEach((l,t)=>{const y=47+t*18,on=!songFocus&&track===t, color=muted[t]?'#68717d':colors[t];rect(3,y,234,16,on?'#343251':'#151e2d');if(on)rect(3,y,2,16,color);text(`${t+1} ${l}`,7,y+8,color,8);
+  if(t===0){drawLocks(t,x,y,w,s);return;}
   if(zoom){for(let i=0;i<48;i++)if(events(t,i+s.i*5)){const xx=x+Math.floor(i*w/48),ny=t===1?y+3:y+3+(i*(t+2))%9;rect(xx,ny,t===1?1:3,t===1?10:2,color);}}
   else {let st=0;for(let i=0;i<parts.length;i++){const n=parts[i][1],a=x+Math.floor(st*w/total),b=x+Math.floor((st+n)*w/total);if(events(t,i)||t===1)rect(a,y+3,b-a-1,10,color);st+=n;}}
  });
- const px=x+Math.min(w-1,Math.floor((zoom?(position-s.at)/s.n:position/total)*w));for(let t=1;t<locks.length;t++)for(const step of locks[t].keys()){const bar=step/16;if(zoom&&(bar<s.at||bar>=s.at+s.n))continue;const lx=x+Math.floor((zoom?(bar-s.at)/s.n:bar/total)*w);rect(lx,60+t*18,2,2,muted[t]?'#858585':'#ffcf78');}
+ const px=x+Math.min(w-1,Math.floor((zoom?(position-s.at)/s.n:position/total)*w));labels.slice(1).forEach((_,i)=>drawLocks(i+1,x,47+(i+1)*18,w,s));
  rect(px,44,1,165,'#f2f5ff');
- if(track===0)text(`${recording===0?'● REC · ':''}K${masterView+1} ${masterShort[masterView]} · ${value(masterView)}`,6,226,masterInk[masterView],8);else if(recording===track)text('● REC · '+lockCount(track)+' LOCKS',6,226,'#ff776f',8);else text(track===0?'MASTER · K1 BPM K2 DJ K3 PUMP K4 ECHO':`${labels[track]} · ${patches[track][patch[track]]} · ${muted[track]?'MUTED':'SEQ / PRESETS'}`,6,226,'#d6c6ff',8);
+ if(songFocus)text(`${partPick+1}/${parts.length} · ${parts[partPick][0]} · PRESETS: REPLACE`,6,226,'#ffcf78',8);
+ else if(track===0||touched[track]||recording===track){const k=knobView[track];text(`${recording===track?'● REC · ':''}K${k+1} ${(track===0?masterShort:mixShort)[k]} · ${value(k)}`,6,226,masterInk[k],8);}
+ else text(`${labels[track]} · ${patches[track][patch[track]]} · ${muted[track]?'MUTED':'SEQ / PRESETS'}`,6,226,'#d6c6ff',8);
 }
 function sync(){
- $('overview').hidden=$('detail').hidden=mode!=='song';$('back').hidden=mode==='song';
+ $('overview').hidden=$('detail').hidden=mode!=='song';$('back').hidden=mode==='song'&&!songFocus; $('back').textContent=songFocus?'↓ К дорожкам':'← Песня';$('select-label').textContent=songFocus?'SELECT · часть песни':'SELECT · дорожка';$('preset-label').textContent=songFocus?'PRESETS · заменить часть':'PRESETS · звуки';
  $('overview').setAttribute('aria-pressed',String(!zoom));$('detail').setAttribute('aria-pressed',String(zoom));
  $('play').textContent=transport==='play'?'Ⅱ PAUSE':transport==='pause'?'▶ RESUME':'▶ PLAY';$('seq').disabled=track===0;$('mute').disabled=track===0;$('mute').setAttribute('aria-pressed',String(muted[track]));
- $('rec').setAttribute('aria-pressed',String(recording===track));$('rec').disabled=Boolean(clear);$('rec').textContent=recording===track?'● REC ON':'● REC';
- $('knobs').replaceChildren();(track===0?masterNames:mixNames).forEach((n,i)=>{const d=document.createElement('div');d.className='row';const label=document.createElement('label');label.textContent=`K${i+1} · ${n}`;if(track===0){label.style.color=masterInk[i];label.style.fontWeight=i===masterView?'700':'';}const val=document.createElement('span');val.textContent=value(i);d.append(label,val);[-1,1].forEach(sign=>{const b=document.createElement('button');b.textContent=sign<0?'−':'+';b.setAttribute('aria-label',n+(sign<0?' уменьшить':' увеличить'));b.onclick=()=>turnKnob(i,sign);d.append(b);});$('knobs').append(d);});
+ $('rec').setAttribute('aria-pressed',String(recording===track));$('rec').disabled=Boolean(clear)||songFocus;$('rec').textContent=recording===track?'● REC ON':'● REC';
+ $('knobs').replaceChildren();(songFocus?[]:track===0?masterNames:mixNames).forEach((n,i)=>{const d=document.createElement('div');d.className='row';const label=document.createElement('label');label.textContent=`K${i+1} · ${n}`;label.style.color=masterInk[i];label.style.fontWeight=i===knobView[track]?'700':'';const val=document.createElement('span');val.textContent=value(i);d.append(label,val);[-1,1].forEach(sign=>{const b=document.createElement('button');b.textContent=sign<0?'−':'+';b.setAttribute('aria-label',n+(sign<0?' уменьшить':' увеличить'));b.onclick=()=>turnKnob(i,sign);d.append(b);});$('knobs').append(d);});
  render();
 }
-function act(k,n){if(k==='select'){track=clamp(track+n,0,8);if(track===0)mode='song';}else if(track>0){if(mode==='presets')patch[track]=clamp(patch[track]+n,0,patches[track].length-1);else mode='presets';}else $('status').textContent='MASTER не использует пресеты инструментов.';sync();}
+function act(k,n){
+ if(songFocus){if(k==='select')partPick=clamp(partPick+n,0,parts.length-1);else return replacePart(n);}
+ else if(k==='select'){
+   if(mode==='song'&&track===0&&n<0){if(++upClicks>=3){songFocus=true;partPick=section().i;upClicks=0;}}
+   else {upClicks=0;track=clamp(track+n,0,8);if(track===0)mode='song';}
+ }else if(track>0){upClicks=0;if(mode==='presets')patch[track]=clamp(patch[track]+n,0,patches[track].length-1);else mode='presets';}
+ else {$('status').textContent='MASTER не использует пресеты инструментов.';upClicks=0;}
+ sync();
+}
 for(const b of document.querySelectorAll('[data-do]'))b.onclick=()=>{const [k,n]=b.dataset.do.split(',');act(k,Number(n));};
-$('back').onclick=()=>{mode='song';sync();};$('seq').onclick=()=>{if(track){mode='seq';sync();}};$('mute').onclick=()=>{if(track){muted[track]=!muted[track];sync();}};
+$('back').onclick=()=>{mode='song';songFocus=false;upClicks=0;sync();};$('seq').onclick=()=>{if(track){mode='seq';sync();}};$('mute').onclick=()=>{if(track){muted[track]=!muted[track];sync();}};
 $('overview').onclick=()=>{zoom=false;sync();};$('detail').onclick=()=>{zoom=true;sync();};
 function shortPlay(){last=performance.now();transport=transport==='play'?'pause':'play';sync();}
 function stop(){transport='stop';position=0;sync();}
@@ -94,7 +110,8 @@ $('cancel-clear').onclick=()=>finishClear(false);
 const rec=$('rec');rec.onpointerdown=e=>{if(e.button!==0||recHold!==null||clear)return;rec.setPointerCapture(e.pointerId);recHeld=false;const target=track;recHold=setTimeout(()=>{recHeld=true;beginClear(target);},2000);};
 function recRelease(){clearTimeout(recHold);recHold=null;}rec.onpointerup=()=>{if(recHold===null)return;recRelease();if(!recHeld)recTap();};rec.onpointercancel=recRelease;rec.onlostpointercapture=recRelease;rec.onclick=e=>{if(e.detail===0)recTap();};
 c.onclick=e=>{const r=c.getBoundingClientRect(),x=(e.clientX-r.left)*240/r.width,y=(e.clientY-r.top)*240/r.height;
- if(mode==='song'&&y>=47&&y<209){track=Math.floor((y-47)/18);sync();}
+ if(mode==='song'&&y>=26&&y<44){if(!songFocus)partPick=section().i;songFocus=true;upClicks=0;let at=0;for(let i=0;i<parts.length;i++){at+=parts[i][1];if(x>=53&&(x-53)*total/181<at){partPick=i;break;}}sync();}
+ else if(mode==='song'&&y>=47&&y<209){songFocus=false;upClicks=0;track=Math.floor((y-47)/18);sync();}
  else if(mode==='presets'&&x>=88&&y>=60&&y<123){patch[track]=Math.floor((y-60)/21);sync();}
  else if(mode==='seq'&&x>=10&&x<234&&y>=76&&y<208){const i=Math.floor((y-76)/33)*4+Math.floor((x-10)/56),k=track+':'+i;if(toggled.has(k))toggled.delete(k);else toggled.add(k);render();}
 };
