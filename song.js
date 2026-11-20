@@ -6,6 +6,11 @@ const colors=['#e8d2ff','#ff8858','#c994ff','#87baff','#9de8a9','#ffcd76','#f49b
 const parts=[['A',12],['B',12],['C',16],['D',12],['E',12]], total=64;
 const patches=[[],['ACOUSTIC','808 BOOM','909 CLUB'],['SUB','FM BASS','PLUCK'],['TINE','ORGAN','PIANO'],['AIR','CLOUD','WARM'],['SOFT LEAD','SYNC','SAW'],['TOMS','SHAKER','CLAPS'],['SWEEP','NOISE','RING'],['INIT','BELLS','PLUCK']];
 const master=[112,0,0,0], masterNames=['Темп','DJ-фильтр','Sidechain / Pump','Sync Delay / Echo'];
+const mutationNames=['Шанс на такт','Глубина','Режим цикла','Гейт / плотность'];
+const mutationModes=['LOCK','DRIFT','ANCHOR'];
+const mutation=labels.map(()=>[0,25,0,0]);
+const variants=labels.map(()=>new Map());
+let mutationView=false;
 const mix=labels.map(()=>[80,0,0,0]), mixNames=['Громкость','Панорама L / R','Фильтр LPF / HPF','Reverb'];
 const masterInk=['#ffcf78','#8dd9ff','#ffa2bf','#9ce9a5'];
 const masterShort=['BPM','DJ FILTER','PUMP','ECHO'];
@@ -24,10 +29,33 @@ function text(s,x,y,col='#e7edf7',font=9){g.fillStyle=col;g.font=`600 ${font}px 
 function rect(x,y,w,h,col){g.fillStyle=col;g.fillRect(x,y,w,h);}
 function section(){let at=0;for(let i=0;i<parts.length;i++){const [name,n]=parts[i];if(position<at+n)return {i,name,n,at};at+=n;}return {i:0,name:'A',n:8,at:0};}
 function events(t,i){return ((i*(t+3)+t*11)%17)<(t===1?10:4);}
+function baseHit(t,i){return events(t,i)!==toggled.has(t+':'+i);}
+function liveHit(t,i){return variants[t].get(i)??baseHit(t,i);}
+function mutateBar(random=Math.random){
+ for(let t=1;t<labels.length;t++){
+   const [chance,depth,kind,gate]=mutation[t], changes=variants[t];
+   if(!chance||!depth||kind===0||random()*100>=chance)continue;
+   if(kind===2)changes.clear();
+   const len=cycles[t], count=Math.min(len-1,Math.ceil((len-1)*depth/100));
+   const candidates=Array.from({length:len-1},(_,i)=>i+1);
+   for(let i=0;i<count;i++){
+     const index=Math.floor(random()*candidates.length),step=candidates.splice(index,1)[0];
+     if(gate&&random()<Math.abs(gate)/100)changes.set(step,gate>0);
+     else changes.set(step,!liveHit(t,step));
+   }
+ }
+}
 function bipolar(v,left,right){return v===0?'0':(v<0?left:right)+' '+Math.abs(v)+'%';}
 function value(i){const v=(track===0?master:mix[track])[i];return track===0?(i===0?v+' BPM':i===1?bipolar(v,'LPF','HPF'):v+'%'):(i===1?bipolar(v,'L','R'):i===2?bipolar(v,'LPF','HPF'):v+'%');}
 function lockCount(t){return [...locks[t].values()].reduce((n,v)=>n+Object.keys(v).length,0);}
+function mutationValue(i){const v=mutation[track][i];return i===2?mutationModes[v]:i===3?(v>0?'+':'')+v+'%':v+'%';}
 function turnKnob(i,sign){
+ if(mutationView&&mode==='song'){
+   if(!track||songFocus)return;
+   const row=mutation[track];row[i]=clamp(row[i]+sign*(i===2?1:5),i===3?-100:0,i===2?2:100);
+   if(row[0]===0||row[1]===0||row[2]===0)variants[track].clear();
+   sync();return;
+ }
  knobView[track]=i;touched[track]=true;
  const row=track===0?master:mix[track], tempo=track===0&&i===0, bipolarKnob=i===1||(track!==0&&i===2);
  row[i]=clamp(row[i]+sign*(tempo?1:5),tempo?30:bipolarKnob?-100:0,tempo?300:100);
@@ -78,7 +106,7 @@ function render(){
     const len=cycles[t],phase=Math.floor(position*16)%len;
     for(let i=0;i<len;i++){
      const xx=x+Math.floor(i*w/len);rect(xx,y+2,1,12,'#273246');
-     if(i<16&&events(t,i)!==toggled.has(t+':'+i)){const ny=t===1?y+3:y+3+(i*(t+2))%9;rect(xx+2,ny,t===1?2:4,t===1?10:2,color);}
+     if(i<16&&liveHit(t,i)){const ny=t===1?y+3:y+3+(i*(t+2))%9;rect(xx+2,ny,t===1?2:4,t===1?10:2,mutationView&&variants[t].has(i)&&!isMuted(t)?'#fbc978':color);}
     }
     if(transport!=='stop')rect(x+Math.floor(phase*w/len),y+1,1,13,isMuted(t)?'#747d8c':'#f2f5ff');
   }
@@ -86,7 +114,8 @@ function render(){
  });
  const px=x+Math.min(w-1,Math.floor((zoom?(position-s.at)/s.n:position/total)*w));labels.slice(1).forEach((_,i)=>drawLocks(i+1,x,TRACK_Y+(i+1)*ROW_H,w,s));
  rect(px,TRACK_Y-2,1,zoom?ROW_H+2:labels.length*ROW_H+2,'#f2f5ff');if(!zoom)rect(px,SONG_Y-1,1,SONG_H+2,'#f2f5ff');
- if(songFocus)text(`${partPick+1}/${parts.length} · ${parts[partPick][0]} · PRESETS: REPLACE`,6,226,'#ffcf78',8);
+ if(mutationView&&!songFocus)text(track?`MUTATION · ${labels[track]} · ${mutationModes[mutation[track][2]]} · ${mutation[track][0]}%`:'MUTATION · ВЫБЕРИ ДОРОЖКУ 2–9',6,226,'#fbc978',8);
+ else if(songFocus)text(`${partPick+1}/${parts.length} · ${parts[partPick][0]} · PRESETS: REPLACE`,6,226,'#ffcf78',8);
  else if(track===0||touched[track]||recording===track){const k=knobView[track];text(`${recording===track?'● REC · ':''}K${k+1} ${(track===0?masterShort:mixShort)[k]} · ${value(k)}`,6,226,masterInk[k],8);}
  else text(`${labels[track]} · ${patches[track][patch[track]]} · ${isMuted(track)?'MUTED':'SEQ / PRESETS'}`,6,226,'#d6c6ff',8);
 }
@@ -115,12 +144,14 @@ function renderMixer(){
 function sync(){
  if(mode!=='presets'&&presetReturn){clearTimeout(presetTimer);presetTimer=null;presetReturn=null;}
  $('home').hidden=mode!=='presets';
+ $('mutation').setAttribute('aria-pressed',String(mutationView));$('mutation').hidden=mode!=='song';
+ $('mutation-help').hidden=!mutationView||mode!=='song';
 
  $('overview').hidden=$('detail').hidden=mode!=='song';$('back').hidden=mode==='song'&&!songFocus; $('back').textContent=songFocus?'↑ К дорожке 9':'← Песня';$('select-label').textContent=songFocus?'SELECT · ← / → по частям песни':'SELECT · дорожка';$('preset-label').textContent=songFocus?'PRESETS · заменить часть':track===0?'PRESETS · масштаб (− песня / + фрагмент)':'PRESETS · звуки';
  $('overview').setAttribute('aria-pressed',String(!zoom));$('detail').setAttribute('aria-pressed',String(zoom));
  $('play').textContent=transport==='play'?'Ⅱ PAUSE':transport==='pause'?'▶ RESUME':'▶ PLAY';$('seq').disabled=songFocus||track===0;$('mixer').setAttribute('aria-expanded',String(mixerOpen));$('mixer-keys').hidden=!mixerOpen;renderMixer();
- $('rec').setAttribute('aria-pressed',String(recording===track));$('rec').disabled=Boolean(clear)||songFocus;$('rec').textContent=recording===track?'● REC ON':'● REC';
- $('knobs').replaceChildren();(songFocus?[]:track===0?masterNames:mixNames).forEach((n,i)=>{const d=document.createElement('div');d.className='row';const label=document.createElement('label');label.textContent=`K${i+1} · ${n}`;label.style.color=masterInk[i];label.style.fontWeight=i===knobView[track]?'700':'';const val=document.createElement('span');val.textContent=value(i);d.append(label,val);[-1,1].forEach(sign=>{const b=document.createElement('button');b.textContent=sign<0?'−':'+';b.setAttribute('aria-label',n+(sign<0?' уменьшить':' увеличить'));b.onclick=()=>turnKnob(i,sign);d.append(b);});$('knobs').append(d);});
+ $('rec').setAttribute('aria-pressed',String(recording===track));$('rec').disabled=Boolean(clear)||songFocus||(mutationView&&mode==='song');$('rec').textContent=recording===track?'● REC ON':'● REC';
+ $('knobs').replaceChildren();(songFocus?[]:mutationView&&mode==='song'?(track?mutationNames:[]):track===0?masterNames:mixNames).forEach((n,i)=>{const d=document.createElement('div');d.className='row';const label=document.createElement('label');label.textContent=`K${i+1} · ${n}`;label.style.color=masterInk[i];label.style.fontWeight=i===knobView[track]?'700':'';const val=document.createElement('span');val.textContent=mutationView&&mode==='song'?mutationValue(i):value(i);d.append(label,val);[-1,1].forEach(sign=>{const b=document.createElement('button');b.textContent=sign<0?'−':'+';b.setAttribute('aria-label',n+(sign<0?' уменьшить':' увеличить'));b.onclick=()=>turnKnob(i,sign);d.append(b);});$('knobs').append(d);});
  render();
 }
 function act(k,n){
@@ -138,6 +169,7 @@ for(const b of document.querySelectorAll('[data-do]'))b.onclick=()=>{const [k,n]
 $('home').onclick=closePresets;
 for(const event of ['click','keydown','wheel'])document.addEventListener(event,presetActivity,true);
 $('back').onclick=()=>{if(mode==='presets')return closePresets();mode='song';songFocus=false;sync();};$('seq').onclick=()=>{if(track){mode='seq';sync();}};$('mixer').onclick=()=>{mixerOpen=!mixerOpen;sync();};
+$('mutation').onclick=()=>{mutationView=!mutationView;if(mutationView){zoom=true;songFocus=false;}sync();};
 $('overview').onclick=()=>{zoom=false;sync();};$('detail').onclick=()=>{zoom=true;sync();};
 function shortPlay(){last=performance.now();transport=transport==='play'?'pause':'play';sync();}
 function stop(){transport='stop';position=0;sync();}
@@ -155,4 +187,4 @@ c.onclick=e=>{const r=c.getBoundingClientRect(),x=(e.clientX-r.left)*240/r.width
  else if(mode==='presets'&&x>=88&&y>=60&&y<123){patch[track]=Math.floor((y-60)/21);sync();}
  else if(mode==='seq'&&x>=10&&x<234&&y>=76&&y<208){const i=Math.floor((y-76)/33)*4+Math.floor((x-10)/56),k=track+':'+i;if(toggled.has(k))toggled.delete(k);else toggled.add(k);render();}
 };
-function tick(now){const dt=Math.min(100,now-last);last=now;if(transport==='play'){position=(position+dt*master[0]/240000)%total;render();}requestAnimationFrame(tick);}sync();requestAnimationFrame(tick);
+function tick(now){const dt=Math.min(100,now-last);last=now;if(transport==='play'){const old=Math.floor(position);position=(position+dt*master[0]/240000)%total;if(Math.floor(position)!==old)mutateBar();render();}requestAnimationFrame(tick);}sync();requestAnimationFrame(tick);
