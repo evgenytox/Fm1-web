@@ -1,6 +1,7 @@
 'use strict';
 const $=id=>document.getElementById(id), c=$('lcd'), g=c.getContext('2d');
 const labels=['MASTER','DRUM','BASS','KEYS','PAD','LEAD','PERC','FX','AUX'];
+const cycles=[0,16,12,15,16,7,11,13,9]; // Demo pattern lengths in sixteenth-note steps.
 const colors=['#e8d2ff','#ff8858','#c994ff','#87baff','#9de8a9','#ffcd76','#f49bbb','#90e1db','#b3b7ff'];
 const parts=[['A',12],['B',12],['C',16],['D',12],['E',12]], total=64;
 const patches=[[],['ACOUSTIC','808 BOOM','909 CLUB'],['SUB','FM BASS','PLUCK'],['TINE','ORGAN','PIANO'],['AIR','CLOUD','WARM'],['SOFT LEAD','SYNC','SAW'],['TOMS','SHAKER','CLAPS'],['SWEEP','NOISE','RING'],['INIT','BELLS','PLUCK']];
@@ -71,11 +72,18 @@ function render(){
  if(zoom)rect(x+Math.floor(position*w/total),SONG_Y-1,1,SONG_H+2,'#fff');
  labels.forEach((l,t)=>{const y=TRACK_Y+t*ROW_H,on=!songFocus&&track===t, color=muted[t]?'#68717d':colors[t];rect(3,y,234,16,on?'#343251':'#151e2d');if(on)rect(3,y,2,16,color);text(`${t+1} ${l}`,7,y+8,color,8);
   if(t===0){drawLocks(t,x,y,w,s);return;}
-  if(zoom){for(let i=0;i<48;i++)if(events(t,i+s.i*5)){const xx=x+Math.floor(i*w/48),ny=t===1?y+3:y+3+(i*(t+2))%9;rect(xx,ny,t===1?1:3,t===1?10:2,color);}}
+  if(zoom){
+    const len=cycles[t],phase=Math.floor(position*16)%len;
+    for(let i=0;i<len;i++){
+     const xx=x+Math.floor(i*w/len);rect(xx,y+2,1,12,'#273246');
+     if(i<16&&events(t,i)!==toggled.has(t+':'+i)){const ny=t===1?y+3:y+3+(i*(t+2))%9;rect(xx+2,ny,t===1?2:4,t===1?10:2,color);}
+    }
+    if(transport!=='stop')rect(x+Math.floor(phase*w/len),y+1,1,13,muted[t]?'#747d8c':'#f2f5ff');
+  }
   else {let st=0;for(let i=0;i<parts.length;i++){const n=parts[i][1],a=x+Math.floor(st*w/total),b=x+Math.floor((st+n)*w/total);if(events(t,i)||t===1)rect(a,y+3,b-a-1,10,color);st+=n;}}
  });
  const px=x+Math.min(w-1,Math.floor((zoom?(position-s.at)/s.n:position/total)*w));labels.slice(1).forEach((_,i)=>drawLocks(i+1,x,TRACK_Y+(i+1)*ROW_H,w,s));
- rect(px,TRACK_Y-2,1,labels.length*ROW_H+2,'#f2f5ff');if(!zoom)rect(px,SONG_Y-1,1,SONG_H+2,'#f2f5ff');
+ rect(px,TRACK_Y-2,1,zoom?ROW_H+2:labels.length*ROW_H+2,'#f2f5ff');if(!zoom)rect(px,SONG_Y-1,1,SONG_H+2,'#f2f5ff');
  if(songFocus)text(`${partPick+1}/${parts.length} · ${parts[partPick][0]} · PRESETS: REPLACE`,6,226,'#ffcf78',8);
  else if(track===0||touched[track]||recording===track){const k=knobView[track];text(`${recording===track?'● REC · ':''}K${k+1} ${(track===0?masterShort:mixShort)[k]} · ${value(k)}`,6,226,masterInk[k],8);}
  else text(`${labels[track]} · ${patches[track][patch[track]]} · ${muted[track]?'MUTED':'SEQ / PRESETS'}`,6,226,'#d6c6ff',8);
