@@ -81,7 +81,7 @@ function render(){
  else text(`${labels[track]} · ${patches[track][patch[track]]} · ${muted[track]?'MUTED':'SEQ / PRESETS'}`,6,226,'#d6c6ff',8);
 }
 function sync(){
- $('overview').hidden=$('detail').hidden=mode!=='song';$('back').hidden=mode==='song'&&!songFocus; $('back').textContent=songFocus?'↑ К дорожке 9':'← Песня';$('select-label').textContent=songFocus?'SELECT · ← / → по частям песни':'SELECT · дорожка';$('preset-label').textContent=songFocus?'PRESETS · заменить часть':'PRESETS · звуки';
+ $('overview').hidden=$('detail').hidden=mode!=='song';$('back').hidden=mode==='song'&&!songFocus; $('back').textContent=songFocus?'↑ К дорожке 9':'← Песня';$('select-label').textContent=songFocus?'SELECT · ← / → по частям песни':'SELECT · дорожка';$('preset-label').textContent=songFocus?'PRESETS · заменить часть':track===0?'PRESETS · масштаб (− песня / + фрагмент)':'PRESETS · звуки';
  $('overview').setAttribute('aria-pressed',String(!zoom));$('detail').setAttribute('aria-pressed',String(zoom));
  $('play').textContent=transport==='play'?'Ⅱ PAUSE':transport==='pause'?'▶ RESUME':'▶ PLAY';$('seq').disabled=songFocus||track===0;$('mute').disabled=songFocus||track===0;$('mute').setAttribute('aria-pressed',String(muted[track]));
  $('rec').setAttribute('aria-pressed',String(recording===track));$('rec').disabled=Boolean(clear)||songFocus;$('rec').textContent=recording===track?'● REC ON':'● REC';
@@ -96,7 +96,7 @@ function act(k,n){
  }else if(songFocus)return replacePart(n);
  else if(k==='select'){track=clamp(track+n,0,8);if(track===0)mode='song';}
  else if(track>0){if(mode==='presets')patch[track]=clamp(patch[track]+n,0,patches[track].length-1);else mode='presets';}
- else $('status').textContent='MASTER не использует пресеты инструментов.';
+ else if(n){zoom=n>0;$('status').textContent=zoom?'MASTER · Масштаб: текущий фрагмент':'MASTER · Масштаб: вся песня';}
  sync();
 }
 for(const b of document.querySelectorAll('[data-do]'))b.onclick=()=>{const [k,n]=b.dataset.do.split(',');act(k,Number(n));};
