@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<!-- Embedded font license (also in FONT-LICENSE.txt):
+DejaVu Sans Mono — embedded ASCII subset
+
+Fonts are (c) Bitstream (see below). DejaVu changes are in public domain.
+
+Bitstream Vera Fonts Copyright
+———————————————
+
+Copyright (c) 2003 by Bitstream, Inc. All Rights Reserved. Bitstream Vera is a trademark of Bitstream, Inc.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of the fonts accompanying this license ("Fonts") and associated documentation files (the "Font Software"), to reproduce and distribute the Font Software, including without limitation the rights to use, copy, merge, publish, distribute, and/or sell copies of the Font Software, and to permit persons to whom the Font Software is furnished to do so, subject to the following conditions:
+
+The above copyright and trademark notices and this permission notice shall be included in all copies of one or more of the Font Software typefaces.
+
+The Font Software may be modified, altered, or added to, and in particular the designs of glyphs or characters in the Fonts may be modified and additional glyphs or  or characters may be added to the Fonts, only if the fonts are renamed to names not containing either the words "Bitstream" or the word "Vera".
+
+This License becomes null and void to the extent applicable to Fonts or Font Software that has been modified and is distributed under the "Bitstream Vera" names.
+
+The Font Software may be sold as part of a larger software package but no copy of one or more of the Font Software typefaces may be sold by itself.
+
+THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL BITSTREAM OR THE GNOME FOUNDATION BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM OTHER DEALINGS IN THE FONT SOFTWARE.
+
+Except as contained in this notice, the names of Gnome, the Gnome Foundation, and Bitstream Inc., shall not be used in advertising or otherwise to promote the sale, use or other dealings in this Font Software without prior written authorization from the Gnome Foundation or Bitstream Inc., respectively. For further information, contact: fonts at gnome dot org.
+
+-->
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FM‑1 · Секвенсор 240 × 240</title>
+<style>
+@font-face{font-family:LCD;src:url(data:font/woff;base64,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) format('woff');font-weight:400 800;font-display:block}
+:root{color-scheme:light;--paper:#f0efe9;--ink:#202a2d;--muted:#6d7473;--line:#d6d8d0;--accent:#347262;--k1:#f4bd5b;--k2:#67d6e5;--k3:#ef8fae;--k4:#b9e58d}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:14px;line-height:1.5}button{font:inherit;touch-action:manipulation;cursor:pointer}button:focus-visible,[tabindex]:focus-visible{outline:3px solid #ae7742;outline-offset:3px}button:disabled{cursor:default;opacity:.4}button svg{pointer-events:none}.wrap{max-width:1216px;margin:auto;padding:36px 24px 40px}.eyebrow{font-size:10px;font-weight:750;letter-spacing:.14em;display:flex;align-items:center;gap:10px}.dot{width:7px;height:7px;border-radius:50%;background:var(--accent)}.eyebrow .rev{margin-left:auto;border:1px solid var(--line);border-radius:20px;padding:4px 10px;letter-spacing:.05em;color:var(--muted)}.hero{display:grid;grid-template-columns:1fr auto;align-items:center;gap:24px;margin:24px 0 28px}h1{font-size:clamp(32px,4vw,54px);letter-spacing:-.045em;line-height:1.07;font-weight:650;margin:0 0 14px}.intro{max-width:670px;font-size:16px;line-height:1.65;color:#69716f;margin:0}.resolution{border-left:1px solid var(--line);padding-left:36px;font-size:52px;letter-spacing:-.07em;line-height:.91;font-weight:450;color:#5b7067}.resolution small{display:block;margin-top:15px;font-size:10px;font-weight:700;letter-spacing:.12em;color:#6d7473}.meta{display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px;border-top:1px solid var(--line);padding-top:16px;margin-bottom:22px;font-size:11px;color:#68716c}.meta b{color:#293e35;font-weight:650}.notice{margin-left:auto;border:1px solid #d3d7ca;border-radius:20px;padding:4px 10px;font-size:10px;letter-spacing:.04em}
+.transport{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:14px;background:#e5e8df;border:1px solid #d4dacd;border-radius:12px;margin-bottom:24px}.navctrl{display:flex;align-items:center;gap:6px}.ctrl-label{font-size:9px;letter-spacing:.08em;font-weight:750;color:#667367;margin-right:4px}.square{border:1px solid #c8d0c3;background:#f8f9f3;border-radius:7px;color:#29372e;min-width:30px;height:32px;display:inline-flex;align-items:center;justify-content:center;font-size:17px;padding:0 8px}.square:hover{background:white}.selection{min-width:80px;text-align:center;font:700 11px LCD,monospace;letter-spacing:.02em}.sep{height:24px;width:1px;background:#cbd2c4}.soft{border:1px solid #c8d0c3;background:#f5f7ef;height:33px;padding:0 12px;border-radius:7px;font-size:10px;font-weight:750;letter-spacing:.04em}.soft:hover{background:white}.soft.rec{color:#9a4241}.soft.rec.pulse{background:#f6cfc7}.play{height:34px;min-width:94px;position:relative;overflow:hidden;border:1px solid #2b5143;color:#f4f8ee;background:#345d4b;border-radius:7px;padding:0 14px;font-size:10px;font-weight:750;letter-spacing:.06em;touch-action:none}.play:after{content:"";position:absolute;bottom:0;left:0;height:3px;width:calc(var(--hold,0) * 100%);background:var(--k1)}.play:hover{background:#294e3d}.transport-readout{font:11px LCD,monospace;color:#526650;white-space:nowrap}.hold-hint{font-size:10px;color:#697966;margin-left:auto}.canvas-legend{display:flex;align-items:center;flex-wrap:wrap;gap:16px;margin-bottom:12px;font-size:10px;color:#6d756e}.keyline{display:inline-block;width:10px;height:8px;margin-right:5px;vertical-align:-1px;border:2px solid #b78530}.keyline.playing{border:0;background:#4f6559;height:2px;vertical-align:3px}.keyline.queued{border:0;background:#b78530;clip-path:polygon(0 0,100% 0,50% 100%)}.canvas-legend .right{margin-left:auto;color:#7b8179}
+.prototypes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;align-items:start}.card{min-width:0;padding:18px 16px 17px;border:1px solid #d5d8ce;background:#f8f8f2;border-radius:14px;transition:border-color .15s,box-shadow .15s}.card.active{border-color:#7a9983;box-shadow:0 0 0 2px #7a998317}.cardhead{display:flex;align-items:center;gap:10px;margin-bottom:17px}.cardnum{font:12px LCD,monospace;color:#7e8e7f}.cardhead h2{font-size:17px;font-weight:650;margin:0;letter-spacing:-.02em}.cardhead .active-badge{margin-left:auto;border:1px solid #c9d6c5;color:#5e7b63;background:#eaf0e3;border-radius:20px;font-size:8px;letter-spacing:.07em;padding:3px 7px;visibility:hidden}.card.active .active-badge{visibility:visible}.device{border-radius:11px;background:#222b2c;padding:14px 10px 11px;box-shadow:inset 0 1px 0 #3c4442;max-width:292px;margin:auto}.lcd-frame{display:flex;justify-content:center;background:#131b1d;border:1px solid #3a4341;border-radius:6px;padding:9px;max-width:264px;margin:auto;box-shadow:inset 0 2px 8px #0004}.lcd{width:240px;height:240px;display:block;image-rendering:pixelated;background:#080d12}.lcd-caption{color:#8d9d99;font:8px LCD,monospace;display:flex;justify-content:space-between;max-width:240px;margin:9px auto 0;letter-spacing:.08em}.encoders{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:2px;margin-top:14px}.encoder{min-width:0;text-align:center;color:var(--c);font:9px LCD,monospace}.encoder-name{height:14px;font-size:8px;white-space:nowrap}.dial{position:relative;width:38px;height:38px;margin:4px auto 6px;border-radius:50%;border:1px solid #56605b;background:radial-gradient(ellipse at 36% 28%,#424e48,#252e2b 64%);box-shadow:0 3px 3px #0005,inset 0 1px 0 #ffffff16;cursor:ns-resize;touch-action:none;user-select:none}.dial:before{content:"";position:absolute;left:16px;top:2px;width:3px;height:11px;border-radius:2px;background:var(--c);transform-origin:1.5px 16px;transform:rotate(var(--rotation,-20deg))}.encoder.key-active .dial{border-color:var(--c)}.encoder-value{height:17px;color:#d9e3db;font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.turns{display:flex;justify-content:center;gap:5px;margin-top:2px}.turns button{border:1px solid #46534c;background:#303c35;color:#bdc9c0;border-radius:4px;width:23px;height:25px;padding:0;font-size:15px;line-height:1}.turns button:hover{background:#445148;color:white}.carddesc{font-size:12px;line-height:1.65;color:#657267;margin:17px 2px 0;min-height:59px}.carddesc strong{font-weight:650;color:#374b3b}.cardaction{display:flex;gap:6px;align-items:center;margin:13px 2px 0;min-height:30px}.cardaction button{border:1px solid #d3d9cb;background:#edf1e6;border-radius:6px;color:#4c654e;padding:6px 9px;font-size:9px;font-weight:700}.cardaction small{font-size:9px;color:#788470}.cardaction .export{margin-left:auto;border:0;background:transparent;color:#84927f;white-space:nowrap}.section-select{display:flex;align-items:center;gap:5px}.section-select span{font-size:8px;color:#75856f;letter-spacing:.05em}.cardaction .section-select button{font-size:13px;padding:0;width:25px;height:28px}
+.explainer{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:32px;margin-top:33px;padding-top:24px;border-top:1px solid var(--line)}.explainer h3{font-size:12px;letter-spacing:.01em;font-weight:700;margin:0 0 9px}.explainer p{font-size:12px;line-height:1.75;color:#6b756d;margin:0}.explainer code{font:10px LCD,monospace;background:#e2e7dc;border-radius:3px;padding:2px 4px;color:#536e54}.footer{display:flex;gap:14px;flex-wrap:wrap;border-top:1px solid var(--line);margin-top:28px;padding-top:15px;font-size:10px;color:#7c8379}.footer span:last-child{margin-left:auto}.status{margin-top:16px;min-height:20px;color:#55734f;font-size:12px}kbd{font:10px LCD,monospace;border:1px solid #c9d0c0;border-radius:3px;padding:1px 4px;background:#f7f8f0}.tinybutton{font-size:10px;border:0;background:none;color:#798575;padding:0;text-decoration:underline;text-underline-offset:3px}
+@media(max-width:1060px){.prototypes{grid-template-columns:repeat(2,minmax(0,1fr))}.card:last-child{grid-column:1/-1;max-width:540px;width:100%;justify-self:center}.hold-hint{display:none}.notice{margin-left:0}.carddesc{min-height:0}}
+@media(max-width:700px){.wrap{padding:22px 14px}.hero{grid-template-columns:1fr;margin:22px 0}.resolution{display:none}.intro{font-size:14px}.eyebrow{font-size:8px;gap:6px}.eyebrow .rev{font-size:8px;padding:3px 6px}.meta{gap:8px 15px;font-size:10px}.notice{font-size:9px}.transport{gap:10px;padding:11px}.transport .sep{display:none}.transport-readout{margin-left:auto;font-size:10px}.hold-hint{display:block;flex-basis:100%;margin:0}.canvas-legend{gap:8px 12px;font-size:9px}.canvas-legend .right{flex-basis:100%;margin:0}.prototypes{grid-template-columns:1fr;gap:16px}.card{padding:16px 12px;max-width:470px;width:100%;justify-self:center}.card:last-child{grid-column:auto;max-width:470px}.explainer{grid-template-columns:1fr;gap:19px;margin-top:26px}.footer span:last-child{margin-left:0}.carddesc{font-size:12px}.device{padding-left:7px;padding-right:7px}.lcd-frame{padding:7px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<header>
+ <div class="eyebrow"><span class="dot"></span>FM‑1 / АВТОНОМНЫЙ СЕКВЕНСОР<span class="rev">UI STUDY 01</span></div>
+ <div class="hero"><div><h1>Песня. Не меню.</h1><p class="intro">Ритм, ноты и гармония — три связанных экрана одного инструмента. Всё важное видно сразу, а редактирование не убегает вслед за воспроизведением.</p></div><div class="resolution">240<br>× 240<small>РЕАЛЬНЫЙ РАСТР LCD</small></div></div>
+ <div class="meta"><span><b>04</b> ручки параметров</span><span><b>SELECT</b> выбор дорожки</span><span><b>A–E</b> секции песни</span><span><b>HOME / SEQ</b> обзор и детали</span><span class="notice">МАКЕТ · БЕЗ ЗВУКА И MIDI · НЕ ПРОШИВКА</span></div>
+</header>
+<section class="transport" aria-label="Органы управления макетом">
+ <div class="navctrl"><span class="ctrl-label">SELECT</span><button type="button" class="square" id="select-minus" aria-label="Предыдущая дорожка">−</button><output class="selection" id="selection">2 DRUM</output><button type="button" class="square" id="select-plus" aria-label="Следующая дорожка">+</button></div>
+ <div class="sep"></div>
+ <button type="button" class="soft" id="home">HOME</button><button type="button" class="soft" id="seq">SEQ</button>
+ <button type="button" class="play" id="play" title="Нажать: играть / пауза. Удерживать 2 секунды: стоп и сброс позиции.">▶ PLAY</button><button type="button" class="soft rec" id="rec" title="Пошаговый ввод: включить / выключить выбранный шаг">REC · ШАГ</button>
+ <div class="navctrl"><span class="ctrl-label">BPM</span><button type="button" class="square" id="bpm-minus" aria-label="Медленнее">−</button><output id="bpm" class="selection" style="min-width:28px">122</output><button type="button" class="square" id="bpm-plus" aria-label="Быстрее">+</button></div>
+ <span class="transport-readout" id="position">STOP · A 01:01</span><span class="hold-hint">PLAY: нажать — пауза / продолжить; держать 2 с — стоп.</span>
+</section>
+<div class="canvas-legend"><span><i class="keyline"></i>рамка — редактирование</span><span><i class="keyline playing"></i>светлая метка — воспроизведение</span><span><i class="keyline queued"></i>треугольник — следующая секция</span><span class="right">Дисплеи не сенсорные. Все действия — органами управления ниже.</span></div>
+<section class="prototypes" aria-label="Три прототипа дисплея">
+ <article class="card active" id="card-drum" data-mode="drum">
+  <div class="cardhead"><span class="cardnum">01 /</span><h2>Ритм</h2><span class="active-badge">SELECTED</span></div>
+  <div class="device"><div class="lcd-frame"><canvas width="240" height="240" class="lcd" id="lcd-drum" role="img" aria-label="Барабанный секвенсор: шесть звуков, шестнадцать шагов, курсор редактирования и позиция воспроизведения"></canvas></div><div class="lcd-caption"><span>240 × 240 PX</span><span>DRUM / STEP EDIT</span></div><div class="encoders" id="encoders-drum"></div></div>
+  <p class="carddesc"><strong>Шесть звуков × 16 шагов.</strong> Видно грув целиком. Для выбранного удара отдельно задаются сила и вероятность. REC включает или убирает удар.</p>
+  <div class="cardaction"><button type="button" data-focus="drum">ВЫБРАТЬ DRUM</button><small>Курсор не следует за PLAY</small><button type="button" class="export" data-export="drum">PNG ↗</button></div>
+ </article>
+ <article class="card" id="card-notes" data-mode="notes">
+  <div class="cardhead"><span class="cardnum">02 /</span><h2>Ноты</h2><span class="active-badge">SELECTED</span></div>
+  <div class="device"><div class="lcd-frame"><canvas width="240" height="240" class="lcd" id="lcd-notes" role="img" aria-label="Нотный редактор: шестнадцать видимых шагов из тридцати двух, высота нот, сила и длительность"></canvas></div><div class="lcd-caption"><span>240 × 240 PX</span><span>NOTE / STEP EDIT</span></div><div class="encoders" id="encoders-notes"></div></div>
+  <p class="carddesc"><strong>Одна партия — крупно и понятно.</strong> 16 видимых шагов, 32 в демо-цикле. K1 переводит на вторую страницу; PLAY не уводит с выбранной ноты.</p>
+  <div class="cardaction"><button type="button" data-focus="notes">ВЫБРАТЬ BASS</button><small>REC — нота / пауза</small><button type="button" class="export" data-export="notes">PNG ↗</button></div>
+ </article>
+ <article class="card" id="card-song" data-mode="song">
+  <div class="cardhead"><span class="cardnum">03 /</span><h2>Песня</h2><span class="active-badge">SELECTED</span></div>
+  <div class="device"><div class="lcd-frame"><canvas width="240" height="240" class="lcd" id="lcd-song" role="img" aria-label="Аранжировщик: секции A–E, аккорды по тактам, текущая и следующая секции"></canvas></div><div class="lcd-caption"><span>240 × 240 PX</span><span>SONG / CHORDS</span></div><div class="encoders" id="encoders-song"></div></div>
+  <p class="carddesc"><strong>Аккорды отдельно от нот.</strong> У каждой секции своя гармония и длина. Переход A → B ставится в очередь и срабатывает в конце текущей секции.</p>
+  <div class="cardaction"><div class="section-select"><span>ALGORITHM / A–E</span><button type="button" id="section-minus" aria-label="Предыдущая секция">−</button><button type="button" id="section-plus" aria-label="Следующая секция">+</button></div><button type="button" class="export" data-export="song">PNG ↗</button></div>
+ </article>
+</section>
+<div class="status" id="status" role="status" aria-live="polite">Нажми PLAY. Затем выбери DRUM или BASS и покрути K1–K4 кнопками − / +.</div>
+<section class="explainer">
+ <div><h3>Одна логика управления</h3><p><code>SELECT</code> сохраняет порядок 1–9 → A–E и обратно, без зацикливания. <code>HOME</code> открывает песню, <code>SEQ</code> возвращает последний нотный редактор. <code>REC</code> здесь — пошаговый ввод в SEQ, не запись автоматизации.</p></div>
+ <div><h3>Не останавливает музыку</h3><p>Курсор редактирования и белая позиция PLAY независимы. Смена страницы не сбрасывает цикл. Ударные в демо идут по 16 шагам, бас — по 32. Переключение секции происходит только на музыкальной границе.</p></div>
+ <div><h3>Честные границы макета</h3><p>Работают редактирование, транспорт и очередь секций. Звука, MIDI, автогенерации и связи аккордов с нотами пока нет. Девять пунктов SELECT сохранены из нашего макета; число дорожек и вместимость кода в FM‑1 ещё не подтверждены.</p></div>
+</section>
+<footer class="footer"><span>Ручки: − / +, колесо или вертикальный жест. Shift — быстрее.</span><span><kbd>←</kbd><kbd>→</kbd> SELECT · <kbd>1</kbd>–<kbd>4</kbd> ручка · <kbd>↑</kbd><kbd>↓</kbd> поворот · <kbd>Пробел</kbd> PLAY</span><span>Отдельный прототип. JIANT V10.7.61 не изменена.</span></footer>
+</main>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const C={bg:'#080d12',panel:'#142027',line:'#26363e',muted:'#7d929b',dim:'#3b4d56',fg:'#edf3ee',white:'#ffffff',amber:'#f4bd5b',cyan:'#67d6e5',pink:'#ef8fae',green:'#b9e58d'};
+const KC=[C.amber,C.cyan,C.pink,C.green];
+const TRACKS=['MASTER','DRUM','BASS','KEYS','PAD','LEAD','PERC','FX','AUX'];
+const LANES=['BD','CP','CH','OH','RM','PC'];
+const ROOTS=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+const TYPES=['MAJ','MIN','7','M7'];
+const ctxs=Object.fromEntries(['drum','notes','song'].map(m=>[m,$('lcd-'+m).getContext('2d')]));
+let state;
+let lastFrame=performance.now(), accumulator=0, holdStart=null, holdTimer=null, holdTriggered=false;
+const clamp=(v,lo,hi)=>Math.min(hi,Math.max(lo,v));
+const pad=v=>String(v).padStart(2,'0');
+function defaultDrums(extra=false){return Array.from({length:6},(_,lane)=>Array.from({length:16},(_,i)=>({on:extra?((i+lane*3)%(lane+3)===0):lane===0?i%4===0:lane===1?i===4||i===12:lane===2?i%2===0:lane===3?i===6||i===14:lane===4?i===11:i===15,vel:lane===0?112:lane===1?104:lane===2?(i%4===0?72:88):80,prob:lane>3?75:100})));}
+function defaultNotes(t){const steps=Array.from({length:32},(_,i)=>({on:[0,3,6,8,11,14].includes(i%16),note:[45,45,48,52,45,48,52,43,45,45,48,52,47,47,52,48][i%16]+(t===3?12:t===4?12:t===5?24:0),vel:i%4===0?96:80,gate:i%4===0?85:60}));return steps;}
+function reset(){
+ state={bpm:122,transport:'stop',absTick:0,sectionStart:0,activeSection:0,queuedSection:null,editSection:0,editBar:0,selection:1,focus:'drum',lastSeq:'drum',drumTrack:1,noteTrack:2,drumStep:8,drumLane:2,noteStep:8,noteLow:43,keyKnob:0,lastTouched:{drum:0,notes:0,song:0},drums:{1:defaultDrums(),6:defaultDrums(true)},notes:Object.fromEntries([2,3,4,5,7,8].map(t=>[t,defaultNotes(t)])),sections:[{bars:4,chords:[{root:9,type:1},{root:5,type:0},{root:0,type:0},{root:7,type:0}]},{bars:4,chords:[{root:2,type:1},{root:7,type:2},{root:0,type:0},{root:4,type:2}]},{bars:2,chords:[{root:9,type:1},{root:4,type:2}]},{bars:8,chords:[{root:9,type:1},{root:9,type:1},{root:5,type:0},{root:5,type:0},{root:0,type:0},{root:0,type:0},{root:7,type:0},{root:4,type:2}]},{bars:1,chords:[{root:9,type:1}]}]};
+ for(const s of state.sections){while(s.chords.length<8)s.chords.push({...s.chords[s.chords.length%Math.max(1,s.bars)]});}
+ accumulator=0;lastFrame=performance.now();sync();
+}
+function rect(g,x,y,w,h,col){g.fillStyle=col;g.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h));}
+function box(g,x,y,w,h,col,line=1){rect(g,x,y,w,line,col);rect(g,x,y+h-line,w,line,col);rect(g,x,y,line,h,col);rect(g,x+w-line,y,line,h,col);}
+function text(g,s,x,y,size=11,col=C.fg,align='left',weight=600){g.fillStyle=col;g.font=`${weight} ${size}px LCD,monospace`;g.textBaseline='middle';g.textAlign=align;g.fillText(String(s),Math.round(x),Math.round(y));g.textAlign='left';}
+function triangle(g,x,y,col){g.fillStyle=col;g.beginPath();g.moveTo(x,y);g.lineTo(x+6,y);g.lineTo(x+3,y+4);g.closePath();g.fill();}
+function playingIcon(g,x,y){if(state.transport==='play'){g.fillStyle=C.green;g.beginPath();g.moveTo(x,y-4);g.lineTo(x+6,y);g.lineTo(x,y+4);g.fill();}else if(state.transport==='pause'){rect(g,x,y-4,2,8,C.amber);rect(g,x+4,y-4,2,8,C.amber);}else rect(g,x,y-3,6,6,C.muted);}
+function header(g,num,name){rect(g,0,0,240,240,C.bg);rect(g,6,6,18,17,C.amber);text(g,num,15,15,12,C.bg,'center',800);text(g,name,31,15,14);playingIcon(g,163,15);text(g,'BPM',177,15,8,C.muted);text(g,state.bpm,233,15,14,C.fg,'right');rect(g,6,28,228,1,C.line);}
+function footer(g,mode,labels,values){rect(g,0,204,240,36,'#0f1920');labels.forEach((label,i)=>{const x=i*60;rect(g,x,204,1,36,C.line);text(g,label,x+7,213,9,KC[i]);text(g,values[i],x+7,231,14,C.fg);rect(g,x+4,238,52,state.lastTouched[mode]===i?2:1,KC[i]);});}
+function drumCell(){return state.drums[state.drumTrack][state.drumLane][state.drumStep];}
+function noteCell(){return state.notes[state.noteTrack][state.noteStep];}
+function chord(){return state.sections[state.editSection].chords[state.editBar];}
+function chordName(ch){return ROOTS[ch.root]+(['','m','7','maj7'][ch.type]);}
+function noteName(midi){return ROOTS[midi%12]+(Math.floor(midi/12)-1);}
+function relativeTick(){return Math.max(0,state.absTick-state.sectionStart);}
+function drumValues(){const d=drumCell();return [pad(state.drumStep+1),LANES[state.drumLane],String(d.vel),d.prob+'%'];}
+function noteValues(){const d=noteCell();return [pad(state.noteStep+1),noteName(d.note),String(d.vel),d.gate+'%'];}
+function songValues(){return [pad(state.editBar+1),ROOTS[chord().root],TYPES[chord().type],pad(state.sections[state.editSection].bars)];}
+function drawDrum(){
+ const g=ctxs.drum;const tick=state.absTick%16,cell=drumCell();header(g,state.drumTrack+1,TRACKS[state.drumTrack]);
+ text(g,'HOUSE / STEP',7,39,10,C.muted);text(g,'16 / 16',233,39,10,C.muted,'right');
+ const x=39,y=64,cw=12,rh=18;
+ for(let i=0;i<16;i++){if(i%4===0)text(g,i+1,x+i*cw+5,54,9,C.muted,'center');if(state.transport!=='stop'&&i===tick)rect(g,x+i*cw,58,10,3,C.white);}
+ for(let lane=0;lane<6;lane++){
+  const yy=y+lane*rh,selected=lane===state.drumLane;
+  if(selected)rect(g,4,yy-1,231,rh,'#14242b');
+  text(g,LANES[lane],7,yy+7,11,selected?C.amber:C.muted);
+  for(let i=0;i<16;i++){
+   const d=state.drums[state.drumTrack][lane][i],xx=x+i*cw;
+   rect(g,xx,yy,10,14,i%4===0?'#23333c':'#18272f');
+   if(d.on){g.globalAlpha=.45+d.vel/127*.55;rect(g,xx+1,yy+1,8,12,C.cyan);g.globalAlpha=1;if(d.prob<100)rect(g,xx+7,yy+1,2,2,C.bg);}
+   if(selected&&i===state.drumStep)box(g,xx-1,yy-1,12,16,C.amber,1);
+  }
+ }
+ rect(g,6,179,228,1,C.line);text(g,'EDIT '+pad(state.drumStep+1)+' '+LANES[state.drumLane]+' '+(cell.on?'ON':'OFF'),7,192,10,C.amber);text(g,'PLAY '+(state.transport==='stop'?'--':pad(tick+1)),233,192,10,C.fg,'right');
+ footer(g,'drum',['STEP','VOICE','VEL','CHANCE'],drumValues());
+}
+function updateNoteViewport(){const pitch=noteCell().note;if(pitch<state.noteLow)state.noteLow=pitch;if(pitch>state.noteLow+11)state.noteLow=pitch-11;state.noteLow=clamp(state.noteLow,24,73);}
+function drawNotes(){
+ const g=ctxs.notes,cell=noteCell(),page=Math.floor(state.noteStep/16),start=page*16,tick=state.absTick%32;header(g,state.noteTrack+1,TRACKS[state.noteTrack]);
+ text(g,'MONO / '+(cell.on?'NOTE':'REST'),7,39,10,C.muted);text(g,pad(start+1)+'-'+pad(start+16)+'/32',233,39,10,C.muted,'right');
+ const x=39,y=62,cw=12,rh=9;
+ for(let i=0;i<16;i++){if(i%4===0)text(g,start+i+1,x+i*cw+5,53,9,C.muted,'center');if(state.transport!=='stop'&&tick===start+i)rect(g,x+i*cw,57,10,3,C.white);}
+ for(let r=0;r<12;r++){
+  const p=state.noteLow+11-r,black=[1,3,6,8,10].includes(p%12),yy=y+r*rh;
+  rect(g,x,yy,190,rh-1,black?'#0e1920':'#14232b');
+  if(!black)text(g,noteName(p),7,yy+4,8,p===cell.note?C.amber:C.muted);
+ }
+ for(let i=0;i<16;i++){
+  const idx=start+i,d=state.notes[state.noteTrack][idx],xx=x+i*cw;
+  if(i%4===0)rect(g,xx-1,y,1,108,C.line);
+  if(d.note>=state.noteLow&&d.note<=state.noteLow+11){const yy=y+(state.noteLow+11-d.note)*rh;
+   if(d.on){rect(g,xx+1,yy+1,Math.max(2,Math.round(10*d.gate/100)),6,C.cyan);}
+   if(idx===state.noteStep){box(g,xx,yy,11,8,C.amber);if(!d.on)rect(g,xx+4,yy+3,3,1,C.amber);}
+  }
+  const barh=d.on?Math.max(1,Math.round(d.vel/127*12)):1;
+  rect(g,xx+2,187-barh,6,barh,idx===state.noteStep?C.amber:d.on?C.pink:C.line);
+ }
+ rect(g,6,172,228,1,C.line);text(g,'V',11,181,9,C.pink);text(g,'EDIT '+pad(state.noteStep+1)+' '+(cell.on?noteName(cell.note):'REST'),7,196,10,C.amber);text(g,'PLAY '+(state.transport==='stop'?'--':pad(tick+1)),233,196,10,C.fg,'right');
+ footer(g,'notes',['STEP','NOTE','VEL','GATE'],noteValues());
+}
+function drawSong(){
+ const g=ctxs.song,sec=state.sections[state.editSection],bar=Math.floor(relativeTick()/16),localPlaying=state.transport!=='stop'&&state.activeSection===state.editSection;
+ header(g,1,'SONG');
+ for(let i=0;i<5;i++){
+  const x=8+i*45,active=i===state.activeSection,editing=i===state.editSection;
+  rect(g,x,34,41,20,active?'#32636b':'#192830');text(g,'ABCDE'[i],x+20,44,13,active?C.fg:C.muted,'center');
+  if(editing)rect(g,x+2,54,37,2,C.amber);
+  if(i===state.queuedSection)triangle(g,x+31,34,C.amber);
+ }
+ const pos=state.transport==='stop'?'STOP':'PLAY';
+ text(g,pos+' '+'ABCDE'[state.activeSection]+' '+pad(Math.min(bar+1,state.sections[state.activeSection].bars))+'/'+pad(state.sections[state.activeSection].bars),8,67,10,C.fg);
+ text(g,state.queuedSection===null?'NEXT --':'NEXT '+'ABCDE'[state.queuedSection],232,67,10,state.queuedSection===null?C.muted:C.amber,'right');
+ text(g,'EDIT '+'ABCDE'[state.editSection]+' / CHORDS',8,81,9,C.amber);
+ const cols=sec.bars>4?4:2,rows=2,gap=5,w=(224-gap*(cols-1))/cols,h=43,top=91;
+ for(let i=0;i<cols*rows;i++){
+  const x=Math.round(8+(i%cols)*(w+gap)),y=top+Math.floor(i/cols)*(h+5),exists=i<sec.bars;
+  rect(g,x,y,Math.floor(w),h,exists?'#17272f':'#0d181e');
+  if(exists){text(g,pad(i+1),x+6,y+9,8,C.muted);text(g,chordName(sec.chords[i]),x+Math.floor(w/2),y+27,cols===2?21:13,C.fg,'center');if(localPlaying&&bar===i)rect(g,x+4,y+2,Math.floor(w)-8,2,C.white);if(i===state.editBar)box(g,x,y,Math.floor(w),h,C.amber);}
+  else {text(g,'--',x+Math.floor(w/2),y+23,13,C.dim,'center');}
+ }
+ text(g,'BAR '+pad(state.editBar+1)+' / '+chordName(chord()),8,196,10,C.amber);text(g,'A-E : QUEUE',232,196,9,C.muted,'right');
+ footer(g,'song',['BAR','ROOT','TYPE','BARS'],songValues());
+}
+function drawAll(){drawDrum();drawNotes();drawSong();}
+function currentLabels(mode){return mode==='drum'?['STEP','VOICE','VEL','CHANCE']:mode==='notes'?['STEP','NOTE','VEL','GATE']:['BAR','ROOT','TYPE','BARS'];}
+function currentValues(mode){return mode==='drum'?drumValues():mode==='notes'?noteValues():songValues();}
+function currentRanges(mode,k){if(mode==='drum')return [[1,16],[0,5],[1,127],[0,100]][k];if(mode==='notes')return [[1,32],[24,84],[1,127],[5,100]][k];return [[1,state.sections[state.editSection].bars],[0,11],[0,3],[1,8]][k];}
+function numericValue(mode,k){if(mode==='drum')return [state.drumStep+1,state.drumLane,drumCell().vel,drumCell().prob][k];if(mode==='notes')return [state.noteStep+1,noteCell().note,noteCell().vel,noteCell().gate][k];return [state.editBar+1,chord().root,chord().type,state.sections[state.editSection].bars][k];}
+function setStatus(message){$('status').textContent=message;}
+function focusMode(mode,fromControl=false){
+ state.focus=mode;if(mode==='drum'){state.selection=state.drumTrack;state.lastSeq=mode;}else if(mode==='notes'){state.selection=state.noteTrack;state.lastSeq=mode;}else if(state.selection<9)state.selection=0;
+ if(!fromControl)sync();
+}
+function sync(){
+ if(!state)return;
+ for(const mode of ['drum','notes','song']){
+  $('card-'+mode).classList.toggle('active',state.focus===mode);
+  const vals=currentValues(mode),labels=currentLabels(mode);
+  document.querySelectorAll('#encoders-'+mode+' .encoder').forEach((el,k)=>{
+   el.querySelector('.encoder-name').textContent='K'+(k+1)+' '+labels[k];el.querySelector('.encoder-value').textContent=vals[k];
+   el.classList.toggle('key-active',state.focus===mode&&state.keyKnob===k);
+   const dial=el.querySelector('.dial'),[min,max]=currentRanges(mode,k),value=numericValue(mode,k);
+   dial.style.setProperty('--rotation',(-130+260*(value-min)/Math.max(1,max-min))+'deg');
+   dial.setAttribute('aria-label',mode+' K'+(k+1)+' '+labels[k]);dial.setAttribute('aria-valuemin',min);dial.setAttribute('aria-valuemax',max);dial.setAttribute('aria-valuenow',value);dial.setAttribute('aria-valuetext',vals[k]);
+  });
+ }
+ $('selection').textContent=state.selection<9?(state.selection+1)+' '+TRACKS[state.selection]:'SONG '+'ABCDE'[state.selection-9];
+ $('select-minus').disabled=state.selection===0;$('select-plus').disabled=state.selection===13;
+ $('section-minus').disabled=state.editSection===0;$('section-plus').disabled=state.editSection===4;
+ $('play').textContent=state.transport==='play'?'Ⅱ PAUSE':state.transport==='pause'?'▶ RESUME':'▶ PLAY';
+ $('bpm').textContent=state.bpm;updatePosition();drawAll();
+}
+function updatePosition(){const s=state.sections[state.activeSection],bar=Math.floor(relativeTick()/16);$('position').textContent=(state.transport==='play'?'PLAY':state.transport==='pause'?'PAUSE':'STOP')+' · '+'ABCDE'[state.activeSection]+' '+pad(Math.min(bar+1,s.bars))+':'+pad(relativeTick()%16+1);}
+function turn(mode,k,delta){
+ if(!delta)return;focusMode(mode,true);state.keyKnob=k;state.lastTouched[mode]=k;
+ if(mode==='drum'){
+  if(k===0)state.drumStep=clamp(state.drumStep+delta,0,15);
+  else if(k===1)state.drumLane=clamp(state.drumLane+delta,0,5);
+  else if(k===2)drumCell().vel=clamp(drumCell().vel+delta*4,1,127);
+  else drumCell().prob=clamp(drumCell().prob+delta*5,0,100);
+ }else if(mode==='notes'){
+  if(k===0){state.noteStep=clamp(state.noteStep+delta,0,31);updateNoteViewport();}
+  else if(k===1){noteCell().note=clamp(noteCell().note+delta,24,84);updateNoteViewport();}
+  else if(k===2)noteCell().vel=clamp(noteCell().vel+delta*4,1,127);
+  else noteCell().gate=clamp(noteCell().gate+delta*5,5,100);
+ }else{
+  const s=state.sections[state.editSection];
+  if(k===0)state.editBar=clamp(state.editBar+delta,0,s.bars-1);
+  else if(k===1)chord().root=clamp(chord().root+delta,0,11);
+  else if(k===2)chord().type=clamp(chord().type+delta,0,3);
+  else {s.bars=clamp(s.bars+delta,1,8);state.editBar=Math.min(state.editBar,s.bars-1);}
+ }
+ sync();
+}
+function select(delta){
+ state.selection=clamp(state.selection+delta,0,13);
+ const s=state.selection;
+ if(s===0)state.focus='song';else if(s===1||s===6){state.focus='drum';state.drumTrack=s;state.lastSeq='drum';}else if(s<9){state.focus='notes';state.noteTrack=s;state.lastSeq='notes';updateNoteViewport();}else {state.focus='song';state.editSection=s-9;state.editBar=clamp(state.editBar,0,state.sections[state.editSection].bars-1);}
+ sync();
+}
+function toggleStep(){
+ if(state.focus==='song'){setStatus('REC в этом макете работает только в пошаговом редакторе. Выбери DRUM или BASS.');return;}
+ const cell=state.focus==='drum'?drumCell():noteCell();cell.on=!cell.on;
+ $('rec').classList.add('pulse');setTimeout(()=>$('rec').classList.remove('pulse'),180);
+ setStatus((state.focus==='drum'?LANES[state.drumLane]+' · шаг '+pad(state.drumStep+1):'Нота · шаг '+pad(state.noteStep+1))+(cell.on?' включён.':' выключен.'));sync();
+}
+function togglePlay(){state.transport=state.transport==='play'?'pause':'play';lastFrame=performance.now();setStatus(state.transport==='play'?'Воспроизведение идёт. Курсоры редактирования остаются на месте.':'Пауза. Следующее нажатие PLAY продолжит с этой позиции.');sync();}
+function stop(){state.transport='stop';state.absTick=0;state.sectionStart=0;state.activeSection=state.editSection;state.queuedSection=null;accumulator=0;setStatus('Стоп: позиция сброшена. Ноты, аккорды и курсоры редактирования сохранены в макете.');sync();}
+function chooseSection(delta){
+ const next=clamp(state.editSection+delta,0,4);state.editSection=next;state.editBar=clamp(state.editBar,0,state.sections[next].bars-1);state.selection=9+next;state.focus='song';
+ if(state.transport==='stop'){state.activeSection=next;state.absTick=0;state.sectionStart=0;state.queuedSection=null;setStatus('Выбрана секция '+'ABCDE'[next]+'.');}
+ else {state.queuedSection=next===state.activeSection?null:next;setStatus(state.queuedSection===null?'Очередь отменена: остаёмся в текущей секции.':'Секция '+'ABCDE'[next]+' поставлена в очередь. Переход — после конца текущей секции.');}
+ sync();
+}
+function advance(ticks=1){
+ for(let n=0;n<ticks;n++){
+  state.absTick++;
+  if(state.absTick%16===0&&relativeTick()>=state.sections[state.activeSection].bars*16){
+   if(state.queuedSection!==null){state.activeSection=state.queuedSection;state.queuedSection=null;setStatus('Началась секция '+'ABCDE'[state.activeSection]+'. Фазы инструментальных циклов сохранены.');}
+   state.sectionStart=state.absTick;
+  }
+ }
+ drawAll();updatePosition();
+}
+function buildEncoders(){
+ for(const mode of ['drum','notes','song'])for(let k=0;k<4;k++){
+  const el=document.createElement('div');el.className='encoder';el.style.setProperty('--c',KC[k]);el.dataset.k=k;
+  el.innerHTML='<div class="encoder-name"></div><div class="dial" role="slider" tabindex="0" aria-orientation="vertical"></div><div class="encoder-value"></div><div class="turns"><button type="button" data-dir="-1" aria-label="'+mode+' K'+(k+1)+' уменьшить">−</button><button type="button" data-dir="1" aria-label="'+mode+' K'+(k+1)+' увеличить">+</button></div>';
+  el.querySelectorAll('button').forEach(b=>b.addEventListener('click',e=>turn(mode,k,Number(b.dataset.dir)*(e.shiftKey?4:1))));
+  const dial=el.querySelector('.dial');let drag=null;
+  dial.addEventListener('wheel',e=>{e.preventDefault();if(e.deltaY)turn(mode,k,(e.deltaY<0?1:-1)*(e.shiftKey?4:1));},{passive:false});
+  dial.addEventListener('pointerdown',e=>{focusMode(mode,true);state.keyKnob=k;drag={y:e.clientY,id:e.pointerId};dial.setPointerCapture(e.pointerId);sync();});
+  dial.addEventListener('pointermove',e=>{if(!drag)return;const ticks=Math.trunc((drag.y-e.clientY)/7);if(ticks){drag.y-=ticks*7;turn(mode,k,ticks*(e.shiftKey?4:1));}});
+  const end=()=>{drag=null;};dial.addEventListener('pointerup',end);dial.addEventListener('pointercancel',end);
+  dial.addEventListener('keydown',e=>{if(e.key==='ArrowUp'||e.key==='ArrowDown'){e.preventDefault();e.stopPropagation();turn(mode,k,(e.key==='ArrowUp'?1:-1)*(e.shiftKey?4:1));}});
+  $('encoders-'+mode).append(el);
+ }
+}
+function exportCanvas(mode){const a=document.createElement('a');a.href=$('lcd-'+mode).toDataURL('image/png');a.download=mode+'-240.png';a.click();setStatus('PNG 240×240: '+mode+'. Если встроенный просмотр блокирует загрузку, открой HTML как отдельный файл.');}
+function setup(){
+ buildEncoders();
+ document.querySelectorAll('[data-focus]').forEach(b=>b.addEventListener('click',()=>{focusMode(b.dataset.focus);setStatus('Выбран редактор '+(b.dataset.focus==='drum'?'DRUM':'BASS')+'. K1–K4 и REC управляют им.');}));
+ document.querySelectorAll('[data-export]').forEach(b=>b.addEventListener('click',()=>exportCanvas(b.dataset.export)));
+ $('select-minus').onclick=()=>select(-1);$('select-plus').onclick=()=>select(1);
+ $('home').onclick=()=>{state.selection=0;focusMode('song');setStatus('HOME → песня. Позиция и последний нотный редактор сохранены.');};
+ $('seq').onclick=()=>{focusMode(state.lastSeq);setStatus('SEQ → последний редактор. Выбранный шаг сохранён.');};
+ $('rec').onclick=toggleStep;$('section-minus').onclick=()=>chooseSection(-1);$('section-plus').onclick=()=>chooseSection(1);
+ $('bpm-minus').onclick=()=>{state.bpm=clamp(state.bpm-1,40,240);sync();};$('bpm-plus').onclick=()=>{state.bpm=clamp(state.bpm+1,40,240);sync();};
+ const play=$('play');
+ play.addEventListener('pointerdown',e=>{if(e.button!==0)return;play.setPointerCapture(e.pointerId);holdStart=performance.now();holdTriggered=false;holdTimer=setTimeout(()=>{holdTriggered=true;stop();},2000);});
+ play.addEventListener('pointerup',()=>{if(holdStart===null)return;clearTimeout(holdTimer);holdStart=null;play.style.setProperty('--hold',0);if(!holdTriggered)togglePlay();});
+ play.addEventListener('pointercancel',()=>{clearTimeout(holdTimer);holdStart=null;play.style.setProperty('--hold',0);});
+ play.addEventListener('click',e=>{if(e.detail===0)togglePlay();});
+ document.addEventListener('keydown',e=>{
+  if(e.ctrlKey||e.metaKey||e.altKey||e.target.closest('input,textarea,select')||e.target.closest('[role="slider"]'))return;
+  if(e.code==='Space'&&!e.target.closest('button')){e.preventDefault();togglePlay();}
+  else if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();select(e.key==='ArrowRight'?1:-1);}
+  else if(/^[1-4]$/.test(e.key)){state.keyKnob=Number(e.key)-1;sync();}
+  else if(e.key==='ArrowUp'||e.key==='ArrowDown'){e.preventDefault();turn(state.focus,state.keyKnob,(e.key==='ArrowUp'?1:-1)*(e.shiftKey?4:1));}
+ });
+ document.addEventListener('visibilitychange',()=>{lastFrame=performance.now();});
+ reset();
+ document.fonts.ready.then(()=>drawAll());
+ requestAnimationFrame(frame);
+}
+function frame(now){
+ const dt=Math.min(now-lastFrame,250);lastFrame=now;
+ if(state.transport==='play'){accumulator+=dt;const tickMs=60000/state.bpm/4;let ticks=0;while(accumulator>=tickMs){accumulator-=tickMs;ticks++;}if(ticks)advance(ticks);}
+ if(holdStart!==null)$('play').style.setProperty('--hold',Math.min(1,(now-holdStart)/2000));
+ requestAnimationFrame(frame);
+}
+window.seq240={get state(){return state;},reset,turn,select,advance,stop,togglePlay,chooseSection,toggleStep,focusMode,sync,draw:drawAll};
+setup();
+</script>
+</body>
+</html>
